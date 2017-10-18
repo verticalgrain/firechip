@@ -1,0 +1,70 @@
+<html>
+  <head>
+    <title>This LED is on Fire</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            text-align: center;
+        }
+        .light {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 20px;
+            padding: 20px;
+            width: 150px;
+        }
+    </style>
+  </head>
+
+    <body>
+        <button id="first" class="light" style="color:green;">On</button>
+    <button id="second" class="light" style="color:green;">On</button>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.5.1/firebase.js"></script>
+        <script>
+            // Initialize Firebase
+            var config = {
+              apiKey: "AIzaSyAStCkc69EhE5CBf0JUguncJqmmeX6isUw",
+              authDomain: "firechip-23417.firebaseapp.com",
+              databaseURL: "https://firechip-23417.firebaseio.com",
+              projectId: "firechip-23417",
+              storageBucket: "firechip-23417.appspot.com",
+              messagingSenderId: "706710591657"
+            };
+            firebase.initializeApp(config);
+          
+
+    var rootRef = firebase.database().ref();
+
+    rootRef.child("lights").on("value", function(snapshot) {
+      updateLights(snapshot.val());
+    });
+    
+    jQuery(".light").on('click', function() {
+      var data = {};
+      if (jQuery(this).html() === 'On') {
+        data["lights/"+this.id] = false;
+      } else {
+        data["lights/"+this.id] = true;
+      }
+      rootRef.update(data);
+      return false;
+    });
+    
+    function updateLights(lights) {
+      for (var key in lights) {
+        if (lights.hasOwnProperty(key)) {
+          if(lights[key]) {
+            jQuery("#"+key).html("On");
+            jQuery("#"+key).css("color", "green");
+          } else {
+            jQuery("#"+key).html("Off");
+            jQuery("#"+key).css("color", "red");
+          }
+        }
+      }
+    }
+        </script>
+    </body>
+</html>
